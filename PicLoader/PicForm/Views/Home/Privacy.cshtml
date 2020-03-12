@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+<h1>@ViewData["Title"]</h1>
+
+
+@*<ipnut type="file" id="filename" name ="filename" accept=".png, .jpg, .jpeg" multiple></ipnut>
+<input type="button" id="doload" />*@
+
+<html>
+<head>
+    <script>
+
+        $(function () {
+         $('input[type="file"]').on('change', function (e) {
+         var file = e.target.files[0];
+         var reader = new FileReader();
+         reader.readAsDataURL(file); // 读出 base64
+         reader.onloadend = function () {
+    // 图片的 base64 格式, 可以直接当成 img 的 src 属性值        
+             var dataURL = reader.result;
+             $("#hidmig").val(dataURL);
+    // 下面逻辑处理
+        };        
+
+      }
+    );
+        })
+
+
+
+        function doUpload() {
+          //  var formData = $("#hidmig").val();
+          //  var s_formdata = encodeURIComponent(formData.replace(/^.*,/, ''));
+           // alert(s_formdata);
+           // $("#m1").attr('src', formData);
+            $.ajax({
+                url: '@Url.Action("FileSave")',
+                type: 'POST',
+                data: {img:$("#hidmig").val()},
+                async: false,
+                
+                cache: false,
+                //contentType: false,
+                //processData: false,
+                success: function (returndata) {
+                $("#m1").attr('src', returndata);
+            },
+            error: function (returndata) {
+                //alert(1);
+                alert(JSON.stringify(returndata));
+                alert(returndata);
+            }
+        });
+        }
+    </script>
+
+</head>
+<body>
+    <div>
+        <form id="uploadForm">
+            AJAX上传多文件： <input type="file" name="file" accept="image/*" multiple />
+            <input type="hidden" id="hidmig" />
+            <input type="button" value="上传" onclick="doUpload()" />
+            <img id="m1" />
+        </form>
+    </div>
+    @*<form method="post" enctype="multipart/form-data" id="uploadForm"   >
+            <div>
+                <div>
+                    <p>Form表单多个上传文件:</p>
+                    <input type="file" name="files" accept=".jpg, .jpeg, .png" />
+                    <input type="button" value="上传" onclick="doUpload();"  />
+                </div>
+            </div>
+        </form>*@
+</body>
+</html>
